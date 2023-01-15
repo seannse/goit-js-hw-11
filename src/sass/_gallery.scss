@@ -1,0 +1,104 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --primery-text-color: #757575;
+    --title-text-color: #212121;
+    --hero-text-color: #FFFFFF;
+    --accent-text-color: #2196F3;
+    --logo-text-color: #000000;
+    --primery-bg-color: #FFFFFF;
+    --hero-bg-color: #2F303A;
+    --team-bg-color: #F5F4FA;
+    --hero-bg: #C4C4C4;
+    --icon-color: #AFB1B8;
+}
+
+body {
+    color: var(--logo-text-color);
+    background-color: var(--primery-bg-color);
+
+    font-family: Roboto, sans-serif;
+    letter-spacing: 0.03em;
+}
+
+
+p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+.container {
+    width: 1200px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-form {
+    position: fixed;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    background-color: #2196F3;
+    display: inline-flex;
+        height: 50px;
+        width: 100%;
+        justify-content: center;
+        padding: 10px;
+       
+        
+}
+
+input {
+    outline: transparent;
+}
+
+.gallery {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-top: 40px;
+    padding-bottom: 30px;
+}
+
+.photo-card {
+    background: var(--primery-bg-color);
+    width: calc((100% - 90px) / 4);
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.12),
+            0px 4px 4px rgba(0, 0, 0, 0.06),
+            1px 4px 6px rgba(0, 0, 0, 0.16);
+}
+
+.link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.info {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+    padding: 15px;
+}
+
+.load-more {
+    display: none;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #2196F3;
+    padding: 15px;
+    border-color: #2196F3;
+    border-radius: 10px;
+    text-align: center;
+}

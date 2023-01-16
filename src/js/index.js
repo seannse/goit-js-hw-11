@@ -17,25 +17,35 @@ const simpleLightBox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
+let previousValue = '';
+
 refs.formEl.addEventListener('submit', onFormElSubmit);
 
-function onFormElSubmit(event) {
+async function onFormElSubmit(event) {
   event.preventDefault();
 
+  if (previousValue === event.target.elements.searchQuery.value) {
+    return
+  }
+
+  previousValue = event.target.elements.searchQuery.value;
   refs.btnLoadMore.style.display = 'none';
   event.target.elements.searchBtn.disabled = true;
-
-  pixabayApi.query = event.target.elements.searchQuery.value;
+  pixabayApi.query = previousValue;
   pixabayApi.page = 1;
-  // refs.galleryEl.scrollTop = 0;
 
-  pixabayApi
-    .getPhotos()
-    .then(onPixabayApiResolvedFirst)
-    .catch(onPixabayApiRejected)
-    .finally(() => {
-      event.target.elements.searchBtn.disabled = false;
-    });
+  try {
+    onPixabayApiResolvedFirst(await pixabayApi.getPhotos())
+  } catch (error){
+    console.log(error)
+  } finally {
+    event.target.elements.searchBtn.disabled = false;
+  }
+    // .then(onPixabayApiResolvedFirst)
+    // .catch(onPixabayApiRejected)
+    // .finally(() => {
+    //   event.target.elements.searchBtn.disabled = false;
+    // });
 }
 
 function onPixabayApiResolvedFirst(obj) {
@@ -53,13 +63,8 @@ function onPixabayApiResolvedFirst(obj) {
   refs.galleryEl.innerHTML = createGalleryMarkup(hits);
   Notify.success(`Hooray! We found ${totalHits} images.`);
   simpleLightBox.refresh();
-  // onSmoothScroll();
+  
   window.scrollTo(0, 0);
-  // window.scroll({
-  //   top: 0,
-  //   left: 0,
-  //   behavior: 'smooth'
-  // });
 
   if (totalHits >= pixabayApi.per_page) {
     refs.btnLoadMore.style.display = 'block';
@@ -67,22 +72,30 @@ function onPixabayApiResolvedFirst(obj) {
   }
 }
 
-function onPixabayApiRejected(err) {
-  console.log(err);
-}
+// function onPixabayApiRejected(err) {
+//   console.log(err);
+// }
 
-function onBtnLoadMoreClick(event) {
+async function onBtnLoadMoreClick(event) {
   event.target.disabled = true;
   pixabayApi.page += 1;
   pixabayApi.countHits += pixabayApi.per_page;
 
-  pixabayApi
-    .getPhotos()
-    .then(onPixabayApiResolvedMore)
-    .catch(onPixabayApiRejected)
-    .finally(() => {
-      event.target.disabled = false;
-    });
+  try {
+    onPixabayApiResolvedMore(await pixabayApi.getPhotos())
+  } catch (error){
+    console.log(error)
+  } finally {
+    event.target.disabled = false;
+  }
+
+//   pixabayApi
+//     .getPhotos()
+//     .then(onPixabayApiResolvedMore)
+//     .catch(onPixabayApiRejected)
+//     .finally(() => {
+//       event.target.disabled = false;
+//     });
 }
 
 function onPixabayApiResolvedMore(obj) {
@@ -93,13 +106,19 @@ function onPixabayApiResolvedMore(obj) {
   refs.galleryEl.insertAdjacentHTML('beforeend', createGalleryMarkup(hits));
   simpleLightBox.refresh();
   onSmoothScroll();
-  if (totalHits <= pixabayApi.countHits) {
+
+  if (!hits.length) {
     Notify.info("We're sorry, but you've reached the end of search results.");
-    refs.btnLoadMore.removeEventListener('click', onBtnLoadMoreClick);
-    refs.btnLoadMore.style.display = 'none';
-  }
+      refs.btnLoadMore.removeEventListener('click', onBtnLoadMoreClick);
+      refs.btnLoadMore.style.display = 'none';
+  };
+  // if (totalHits <= pixabayApi.countHits) {
+  //   Notify.info("We're sorry, but you've reached the end of search results.");
+  //   refs.btnLoadMore.removeEventListener('click', onBtnLoadMoreClick);
+  //   refs.btnLoadMore.style.display = 'none';
+  // }
 }
-//  doesn't work, why???
+
 function onSmoothScroll() {
   const { height: cardHeight } =
     refs.galleryEl.firstElementChild.getBoundingClientRect();
